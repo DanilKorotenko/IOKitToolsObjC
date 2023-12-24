@@ -1,6 +1,6 @@
 //
 //  main.m
-//  IOKitToolsObjC
+//  ioregistry
 //
 //  Created by Danil Korotenko on 12/24/23.
 //

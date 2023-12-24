@@ -7,11 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		DAB690002B3891F0008F0CA9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = DAB68FFF2B3891F0008F0CA9 /* main.m */; };
+		DAB6900D2B3892A4008F0CA9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = DAB6900C2B3892A4008F0CA9 /* main.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		DAB68FFA2B3891F0008F0CA9 /* CopyFiles */ = {
+		DAB690082B3892A4008F0CA9 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -23,12 +23,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		DAB68FFC2B3891F0008F0CA9 /* IOKitToolsObjC */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = IOKitToolsObjC; sourceTree = BUILT_PRODUCTS_DIR; };
-		DAB68FFF2B3891F0008F0CA9 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		DAB6900A2B3892A4008F0CA9 /* ioregistry */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ioregistry; sourceTree = BUILT_PRODUCTS_DIR; };
+		DAB6900C2B3892A4008F0CA9 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		DAB68FF92B3891F0008F0CA9 /* Frameworks */ = {
+		DAB690072B3892A4008F0CA9 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -41,7 +41,7 @@
 		DAB68FF32B3891F0008F0CA9 = {
 			isa = PBXGroup;
 			children = (
-				DAB68FFE2B3891F0008F0CA9 /* IOKitToolsObjC */,
+				DAB6900B2B3892A4008F0CA9 /* ioregistry */,
 				DAB68FFD2B3891F0008F0CA9 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -49,37 +49,37 @@
 		DAB68FFD2B3891F0008F0CA9 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				DAB68FFC2B3891F0008F0CA9 /* IOKitToolsObjC */,
+				DAB6900A2B3892A4008F0CA9 /* ioregistry */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		DAB68FFE2B3891F0008F0CA9 /* IOKitToolsObjC */ = {
+		DAB6900B2B3892A4008F0CA9 /* ioregistry */ = {
 			isa = PBXGroup;
 			children = (
-				DAB68FFF2B3891F0008F0CA9 /* main.m */,
+				DAB6900C2B3892A4008F0CA9 /* main.m */,
 			);
-			path = IOKitToolsObjC;
+			path = ioregistry;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		DAB68FFB2B3891F0008F0CA9 /* IOKitToolsObjC */ = {
+		DAB690092B3892A4008F0CA9 /* ioregistry */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DAB690032B3891F0008F0CA9 /* Build configuration list for PBXNativeTarget "IOKitToolsObjC" */;
+			buildConfigurationList = DAB690102B3892A4008F0CA9 /* Build configuration list for PBXNativeTarget "ioregistry" */;
 			buildPhases = (
-				DAB68FF82B3891F0008F0CA9 /* Sources */,
-				DAB68FF92B3891F0008F0CA9 /* Frameworks */,
-				DAB68FFA2B3891F0008F0CA9 /* CopyFiles */,
+				DAB690062B3892A4008F0CA9 /* Sources */,
+				DAB690072B3892A4008F0CA9 /* Frameworks */,
+				DAB690082B3892A4008F0CA9 /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = IOKitToolsObjC;
-			productName = IOKitToolsObjC;
-			productReference = DAB68FFC2B3891F0008F0CA9 /* IOKitToolsObjC */;
+			name = ioregistry;
+			productName = ioregistry;
+			productReference = DAB6900A2B3892A4008F0CA9 /* ioregistry */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -91,7 +91,7 @@
 				BuildIndependentTargetsInParallel = 1;
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
-					DAB68FFB2B3891F0008F0CA9 = {
+					DAB690092B3892A4008F0CA9 = {
 						CreatedOnToolsVersion = 15.0.1;
 					};
 				};
@@ -109,17 +109,17 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				DAB68FFB2B3891F0008F0CA9 /* IOKitToolsObjC */,
+				DAB690092B3892A4008F0CA9 /* ioregistry */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
-		DAB68FF82B3891F0008F0CA9 /* Sources */ = {
+		DAB690062B3892A4008F0CA9 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DAB690002B3891F0008F0CA9 /* main.m in Sources */,
+				DAB6900D2B3892A4008F0CA9 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -241,7 +241,7 @@
 			};
 			name = Release;
 		};
-		DAB690042B3891F0008F0CA9 /* Debug */ = {
+		DAB6900E2B3892A4008F0CA9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -251,7 +251,7 @@
 			};
 			name = Debug;
 		};
-		DAB690052B3891F0008F0CA9 /* Release */ = {
+		DAB6900F2B3892A4008F0CA9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -273,11 +273,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DAB690032B3891F0008F0CA9 /* Build configuration list for PBXNativeTarget "IOKitToolsObjC" */ = {
+		DAB690102B3892A4008F0CA9 /* Build configuration list for PBXNativeTarget "ioregistry" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				DAB690042B3891F0008F0CA9 /* Debug */,
-				DAB690052B3891F0008F0CA9 /* Release */,
+				DAB6900E2B3892A4008F0CA9 /* Debug */,
+				DAB6900F2B3892A4008F0CA9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
