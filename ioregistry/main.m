@@ -54,9 +54,9 @@ struct context
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-static void boldinit();
-static void boldon();
-static void boldoff();
+static void boldinit(void);
+static void boldon(void);
+static void boldoff(void);
 static void printinit(int width);
 static void print(const char * format, ...)  __printflike(1, 2);
 static void println(const char * format, ...)  __printflike(1, 2);
@@ -127,7 +127,7 @@ static void showitem( const void * key,
                       const void * value,
                       void *       parameter );
 
-static void usage();
+static void usage(void);
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -242,7 +242,10 @@ int main(int argc, char ** argv)
 
     printinit(options.width);
 
-    if (options.bold)  boldinit();
+    if (options.bold)
+    {
+        boldinit();
+    }
 
     // Obtain the I/O Kit root service.
 
@@ -342,7 +345,7 @@ static CFMutableDictionaryRef archive( io_registry_entry_t service,
     CFTypeRef              object     = 0; // (needs release)
     CFStringRef            className  = 0; // (needs release)
     CFStringRef            superName  = 0; // (needs release)
-    uint64_t               state      = 0;
+    uint32_t               state      = 0;
     kern_return_t          status     = KERN_SUCCESS;
     uint64_t               time       = 0;
 
@@ -408,7 +411,8 @@ static CFMutableDictionaryRef archive( io_registry_entry_t service,
 
     // Obtain the class of the service.
 
-    status = _IOObjectGetClass(service, kIOClassNameOverrideNone, class);
+//    status = _IOObjectGetClass(service, kIOClassNameOverrideNone, class);
+    status = IOObjectGetClass(service, class);
     assertion(status == KERN_SUCCESS, "can't obtain class", strcpy(class, "<class error>"));
 
     className = CFStringCreateWithCString(kCFAllocatorDefault, class, kCFStringEncodingUTF8);
@@ -456,9 +460,11 @@ static CFMutableDictionaryRef archive( io_registry_entry_t service,
 
     // Obtain the busy state of the service (for IOService objects).
 
-    if (_IOObjectConformsTo(service, "IOService", kIOClassNameOverrideNone))
+//    if (_IOObjectConformsTo(service, "IOService", kIOClassNameOverrideNone))
+    if (IOObjectConformsTo(service, "IOService"))
     {
-        status = IOServiceGetBusyStateAndTime(service, &state, &count, &time);
+//        status = IOServiceGetBusyStateAndTime(service, &state, &count, &time);
+        status = IOServiceGetBusyState(service, &state);
         assertion(status == KERN_SUCCESS, "can't obtain state", time = state = count = 0);
 
         object = CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &state);
@@ -697,7 +703,8 @@ static Boolean compare( io_registry_entry_t service,
 
 		if (checkKernelClass)
 		{
-			if (_IOObjectConformsTo(service, options.class, kIOClassNameOverrideNone) == FALSE)
+//			if (_IOObjectConformsTo(service, options.class, kIOClassNameOverrideNone) == FALSE)
+			if (IOObjectConformsTo(service, options.class) == FALSE)
 			{
 				return FALSE;
 			}
@@ -923,8 +930,8 @@ static void show( io_registry_entry_t service,
     io_name_t              class;          // (don't release)
     struct context         context    = { service, serviceDepth, stackOfBits, options };
     uint32_t               integer    = 0;
-    uint64_t               state      = 0;
-    uint64_t               accumulated_busy_time;
+    uint32_t               state      = 0;
+    uint64_t               accumulated_busy_time = 0;
     io_name_t              location;       // (don't release)
     io_name_t              name;           // (don't release)
     CFMutableDictionaryRef properties = 0; // (needs release)
@@ -958,7 +965,8 @@ static void show( io_registry_entry_t service,
         CFStringRef ancestryCFStr;
         char *      aCStr;
 
-        classCFStr = _IOObjectCopyClass (service, kIOClassNameOverrideNone);
+//        classCFStr = _IOObjectCopyClass (service, kIOClassNameOverrideNone);
+        classCFStr = IOObjectCopyClass (service);
         if (classCFStr) {
             ancestryCFStr = createInheritanceStringForIORegistryClassName (classCFStr);
             if (ancestryCFStr) {
@@ -974,7 +982,8 @@ static void show( io_registry_entry_t service,
     }
     else
     {
-        status = _IOObjectGetClass(service, kIOClassNameOverrideNone, class);
+//        status = _IOObjectGetClass(service, kIOClassNameOverrideNone, class);
+        status = IOObjectGetClass(service, class);
         assertion(status == KERN_SUCCESS, "can't obtain class", strcpy(class, "<class error>"));
 
         print("%s", class);
@@ -992,15 +1001,22 @@ static void show( io_registry_entry_t service,
 
     // Print out the busy state of the service (for IOService objects).
 
-    if (_IOObjectConformsTo(service, "IOService", kIOClassNameOverrideNone))
+//    if (_IOObjectConformsTo(service, "IOService", kIOClassNameOverrideNone))
+    if (IOObjectConformsTo(service, "IOService"))
     {
-        status = IOServiceGetBusyStateAndTime(service, &state, &integer, &accumulated_busy_time);
+//        status = IOServiceGetBusyStateAndTime(service, &state, &integer, &accumulated_busy_time);
+        status = IOServiceGetBusyState(service, &state);
         assertion(status == KERN_SUCCESS, "can't obtain state", accumulated_busy_time = integer = state = 0);
 
+//        print( ", %sregistered, %smatched, %sactive",
+//               state & kIOServiceRegisteredState ? "" : "!",
+//               state & kIOServiceMatchedState    ? "" : "!",
+//               state & kIOServiceInactiveState   ? "in" : "" );
+
         print( ", %sregistered, %smatched, %sactive",
-               state & kIOServiceRegisteredState ? "" : "!",
-               state & kIOServiceMatchedState    ? "" : "!",
-               state & kIOServiceInactiveState   ? "in" : "" );
+               state & 1 ? "" : "!",
+               state & 1    ? "" : "!",
+               state & 1   ? "in" : "" );
 
         print(", busy %ld", 
         (unsigned long)integer);
@@ -1109,7 +1125,7 @@ static void indent(Boolean isNode, UInt32 serviceDepth, UInt64 stackOfBits)
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-void usage()
+void usage(void)
 {
     fprintf( stderr,
      "usage: ioreg [-abfilrtxy] [-c class] [-d depth] [-k key] [-n name] [-p plane] [-w width]\n"
@@ -1143,7 +1159,7 @@ static int termcapstr_outc(int c)
     return putchar(c);
 }
 
-static void boldinit()
+static void boldinit(void)
 {
     char *      term;
     static char termcapbuf[64];
@@ -1166,12 +1182,12 @@ static void boldinit()
     if (termcapstr_boldoff == 0)  termcapstr_boldoff = "";
 }
 
-static void boldon()
+static void boldon(void)
 {
     tputs(termcapstr_boldon, 1, termcapstr_outc);
 }
 
-static void boldoff()
+static void boldoff(void)
 {
     tputs(termcapstr_boldoff, 1, termcapstr_outc);
 }
@@ -1242,7 +1258,7 @@ static void println(const char * format, ...)
 
     printbufclip = FALSE;
     printbufleft = printbufsize;
-}    
+}
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -1729,7 +1745,7 @@ struct physAddrProperty {
 static SInt32
 getRecursivePropValue( io_registry_entry_t thisRegEntry, CFStringRef propertyNameToLookFor )
 {
-	SInt32		returnValue;
+    SInt32		returnValue = 0;
 	CFTypeRef	ptr;
 
     ptr = IORegistryEntrySearchCFProperty(thisRegEntry,
@@ -1929,7 +1945,7 @@ static void printPCIRanges(CFTypeRef value, struct context * context)
     counts[0] = childACells;
     counts[1] = parentACells;
     counts[2] = childSCells;
-    
+
     for (j = 0; j < 3; j++)
     {
         print("%s", titles[j]);  // titles is init'ed at start of func.
@@ -1964,7 +1980,7 @@ static void printPCIRanges(CFTypeRef value, struct context * context)
 static void makepath(io_registry_entry_t target, io_string_t path)
 {
     kern_return_t status = KERN_SUCCESS;
-    
+
     status = IORegistryEntryGetPath(target, kIODeviceTreePlane, path);
     assertion(status == KERN_SUCCESS, "unable to get path", strcpy(path, "<path error"));
 
