@@ -16,6 +16,8 @@
 #include <term.h>                                     // (tputs, ...)
 #include <unistd.h>                                   // (getopt, ...)
 
+#include "IORegistryInfoOptions.h"
+
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 #define assertion_fatal(e, message) ((void) (__builtin_expect(!(e), 0) ? fprintf(stderr, "ioreg: error: %s.\n", message), exit(1) : 0))
@@ -23,33 +25,12 @@
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-struct options
-{
-    UInt32 archive:1;                                 // (-a option)
-    UInt32 bold:1;                                    // (-b option)
-    UInt32 format:1;                                  // (-f option)
-    UInt32 hex:1;                                     // (-x option)
-    UInt32 inheritance:1;                             // (-i option)
-    UInt32 list:1;                                    // (-l option)
-    UInt32 root:1;                                    // (-r option)
-    UInt32 tree:1;                                    // (-t option)
-    UInt32 nouserclasses:1;                           // (-y option)
-
-    char * class;                                     // (-c option)
-    CFStringRef classCFString;                        // (-c option)
-    UInt32 depth;                                     // (-d option)
-    char * key;                                       // (-k option)
-    char * name;                                      // (-n option)
-    char * plane;                                     // (-p option)
-    UInt32 width;                                     // (-w option)
-};
-
 struct context
 {
     io_registry_entry_t service;
     UInt32              serviceDepth;
     UInt64              stackOfBits;
-    struct options      options;
+    IORegistryInfoOptions *options;
 };
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -87,20 +68,20 @@ static void printData(CFTypeRef value, struct context * context);
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 static CFMutableDictionaryRef archive( io_registry_entry_t service,
-                                       struct options      options ) CF_RETURNS_RETAINED;
+                                       IORegistryInfoOptions* options) CF_RETURNS_RETAINED;
 
 static CFMutableDictionaryRef archive_scan( io_registry_entry_t service,
                                             UInt32              serviceDepth,
-                                            struct options      options ) CF_RETURNS_RETAINED;
+                                            IORegistryInfoOptions*      options ) CF_RETURNS_RETAINED;
 
 static CFMutableArrayRef archive_search( io_registry_entry_t service,
                                          UInt32              serviceHasMatchedDepth,
                                          UInt32              serviceDepth,
                                          io_registry_entry_t stackOfObjects[],
-                                         struct options      options ) CF_RETURNS_RETAINED;
+                                         IORegistryInfoOptions*      options ) CF_RETURNS_RETAINED;
 
 static Boolean compare( io_registry_entry_t service,
-                        struct options      options );
+                        IORegistryInfoOptions*      options );
 
 static void indent( Boolean isNode,
                     UInt32  serviceDepth,
@@ -110,18 +91,18 @@ static void scan( io_registry_entry_t service,
                   Boolean             serviceHasMoreSiblings,
                   UInt32              serviceDepth,
                   UInt64              stackOfBits,
-                  struct options      options );
+                  IORegistryInfoOptions*      options );
 
 static void search( io_registry_entry_t service,
                     UInt32              serviceHasMatchedDepth,
                     UInt32              serviceDepth,
                     io_registry_entry_t stackOfObjects[],
-                    struct options      options );
+                    IORegistryInfoOptions*      options );
 
 static void show( io_registry_entry_t service,
                   UInt32              serviceDepth,
                   UInt64              stackOfBits,
-                  struct options      options );
+                  IORegistryInfoOptions*      options );
 
 static void showitem( const void * key,
                       const void * value,
@@ -136,33 +117,14 @@ int main(int argc, char ** argv)
     int                 argument = 0;
     CFWriteStreamRef    file     = 0; // (needs release)
     CFTypeRef           object   = 0; // (needs release)
-    struct options      options;
+
+    IORegistryInfoOptions *options = [[IORegistryInfoOptions alloc] init];
+
     CFURLRef            path     = 0; // (needs release)
     io_registry_entry_t service  = 0; // (needs release)
     io_registry_entry_t stackOfObjects[64];
     Boolean             success  = FALSE;
     struct winsize      winsize;
-
-    // Initialize our minimal state.
-
-    options.archive       = FALSE;
-    options.bold          = FALSE;
-    options.format        = FALSE;
-    options.hex           = FALSE;
-    options.inheritance   = FALSE;
-    options.list          = FALSE;
-    options.root          = FALSE;
-    options.tree          = FALSE;
-    options.nouserclasses = FALSE;
-
-    options.class = 0;
-    options.classCFString = NULL;
-    options.depth = 0;
-    options.key   = 0;
-    options.name  = 0;
-    options.plane = kIOServicePlane;
-    options.root  = 0;
-    options.width = 0;
 
     // Obtain the screen width.
 
@@ -187,8 +149,7 @@ int main(int argc, char ** argv)
                 options.bold = TRUE;
                 break;
             case 'c':
-                options.class = optarg;
-                options.classCFString = CFStringCreateWithCString(kCFAllocatorDefault, optarg, kCFStringEncodingUTF8);
+                options.classStr = [NSString stringWithUTF8String:optarg];
                 break;
             case 'd':
                 options.depth = atoi(optarg);
@@ -200,16 +161,16 @@ int main(int argc, char ** argv)
                 options.inheritance = TRUE;
                 break;
             case 'k':
-                options.key = optarg;
+                options.key = [NSString stringWithUTF8String:optarg];
                 break;
             case 'l':
                 options.list = TRUE;
                 break;
             case 'n':
-                options.name = optarg;
+                options.name = [NSString stringWithUTF8String:optarg];
                 break;
             case 'p':
-                options.plane = optarg;
+                options.plane = [NSString stringWithUTF8String:optarg];
                 break;
             case 'r':
                 options.root = TRUE;
@@ -333,7 +294,7 @@ int main(int argc, char ** argv)
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 static CFMutableDictionaryRef archive( io_registry_entry_t service,
-                                       struct options      options )
+                                       IORegistryInfoOptions *options)
 {
     io_name_t              class;          // (don't release)
     uint32_t               count      = 0;
@@ -377,7 +338,7 @@ static CFMutableDictionaryRef archive( io_registry_entry_t service,
 
     // Obtain the name of the service.
 
-    status = IORegistryEntryGetNameInPlane(service, options.plane, name);
+    status = IORegistryEntryGetNameInPlane(service, [options.plane UTF8String], name);
     assertion(status == KERN_SUCCESS, "can't obtain name", strcpy(name, "<name error>"));
 
     object = CFStringCreateWithCString(kCFAllocatorDefault, name, kCFStringEncodingUTF8);
@@ -388,7 +349,7 @@ static CFMutableDictionaryRef archive( io_registry_entry_t service,
 
     // Obtain the location of the service.
 
-    status = IORegistryEntryGetLocationInPlane(service, options.plane, location);
+    status = IORegistryEntryGetLocationInPlane(service, [options.plane UTF8String], location);
     if (status == KERN_SUCCESS)
     {
         object = CFStringCreateWithCString(kCFAllocatorDefault, location, kCFStringEncodingUTF8);
@@ -493,7 +454,7 @@ static CFMutableDictionaryRef archive( io_registry_entry_t service,
 
 static CFMutableDictionaryRef archive_scan( io_registry_entry_t service,
                                             UInt32              serviceDepth,
-                                            struct options      options )
+                                            IORegistryInfoOptions *options)
 {
     CFMutableArrayRef      array       = 0; // (needs release)
     io_registry_entry_t    child       = 0; // (needs release)
@@ -505,7 +466,7 @@ static CFMutableDictionaryRef archive_scan( io_registry_entry_t service,
 
     // Obtain the service's children.
 
-    status = IORegistryEntryGetChildIterator(service, options.plane, &children);
+    status = IORegistryEntryGetChildIterator(service, [options.plane UTF8String], &children);
     if (status == KERN_SUCCESS)
     {
         childUpNext = IOIteratorNext(children);
@@ -556,7 +517,7 @@ static CFMutableArrayRef archive_search( io_registry_entry_t service,
                                          UInt32              serviceHasMatchedDepth,
                                          UInt32              serviceDepth,
                                          io_registry_entry_t stackOfObjects[],
-                                         struct options      options )
+                                         IORegistryInfoOptions *options)
 {
     CFMutableArrayRef      array       = 0; // (needs release)
     CFMutableArrayRef      array2      = 0; // (needs release)
@@ -622,7 +583,7 @@ static CFMutableArrayRef archive_search( io_registry_entry_t service,
 
     // Obtain the service's children.
 
-    status = IORegistryEntryGetChildIterator(service, options.plane, &children);
+    status = IORegistryEntryGetChildIterator(service, [options.plane UTF8String], &children);
     if (status == KERN_SUCCESS)
     {
         childUpNext = IOIteratorNext(children);
@@ -664,9 +625,8 @@ static CFMutableArrayRef archive_search( io_registry_entry_t service,
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 static Boolean compare( io_registry_entry_t service,
-                        struct options      options )
+                        IORegistryInfoOptions *options)
 {
-    CFStringRef   key      = 0; // (needs release)
     io_name_t     location;     // (don't release)
     Boolean       match    = FALSE;
     io_name_t     name;         // (don't release)
@@ -679,7 +639,7 @@ static Boolean compare( io_registry_entry_t service,
     {
 		bool checkKernelClass = true;
 
-		if (options.classCFString && !options.nouserclasses)
+		if ((nil != options.classStr) && !options.nouserclasses)
 		{
 			value = IORegistryEntryCreateCFProperty( service,
 													 CFSTR(kIOUserClassesKey),
@@ -691,7 +651,7 @@ static Boolean compare( io_registry_entry_t service,
 				{
 					checkKernelClass = false;
 					CFRange range = { 0, CFArrayGetCount(value) };
-					match = CFArrayContainsValue(value, range, options.classCFString);
+					match = CFArrayContainsValue(value, range, (CFStringRef)options.classStr);
 				}
 				CFRelease(value);
 				if (!checkKernelClass && !match)
@@ -704,7 +664,7 @@ static Boolean compare( io_registry_entry_t service,
 		if (checkKernelClass)
 		{
 //			if (_IOObjectConformsTo(service, options.class, kIOClassNameOverrideNone) == FALSE)
-			if (IOObjectConformsTo(service, options.class) == FALSE)
+			if (IOObjectConformsTo(service, [options.classStr UTF8String]) == FALSE)
 			{
 				return FALSE;
 			}
@@ -717,17 +677,10 @@ static Boolean compare( io_registry_entry_t service,
 
     if (options.key)
     {
-        key = CFStringCreateWithCString( kCFAllocatorDefault,
-                                         options.key,
-                                         kCFStringEncodingUTF8 );
-        assertion_fatal(key != NULL, "can't create key");
-
         value = IORegistryEntryCreateCFProperty( service,
-                                                 key,
+                                                (__bridge CFStringRef)options.key,
                                                  kCFAllocatorDefault,
                                                  kNilOptions );
-
-        CFRelease(key);
 
         if (value == NULL)
         {
@@ -745,20 +698,20 @@ static Boolean compare( io_registry_entry_t service,
     {
         // Obtain the name of the service.
 
-        status = IORegistryEntryGetNameInPlane(service, options.plane, name);
+        status = IORegistryEntryGetNameInPlane(service, [options.plane UTF8String], name);
         assertion(status == KERN_SUCCESS, "can't obtain name", strcpy(name, "<name error>"));
 
-        if (strchr(options.name, '@'))
+        if (strchr([options.name UTF8String], '@'))
         {
             strlcat(name, "@", sizeof(name));
 
             // Obtain the location of the service.
 
-            status = IORegistryEntryGetLocationInPlane(service, options.plane, location);
+            status = IORegistryEntryGetLocationInPlane(service, [options.plane UTF8String], location);
             if (status == KERN_SUCCESS)  strlcat(name, location, sizeof(name));
         }
 
-        if (strcmp(options.name, name))
+        if (strcmp([options.name UTF8String], name))
         {
             return FALSE;
         }
@@ -775,7 +728,7 @@ static void scan( io_registry_entry_t service,
                   Boolean             serviceHasMoreSiblings,
                   UInt32              serviceDepth,
                   UInt64              stackOfBits,
-                  struct options      options )
+                  IORegistryInfoOptions *options)
 {
     io_registry_entry_t child       = 0; // (needs release)
     io_registry_entry_t childUpNext = 0; // (don't release)
@@ -784,7 +737,7 @@ static void scan( io_registry_entry_t service,
 
     // Obtain the service's children.
 
-    status = IORegistryEntryGetChildIterator(service, options.plane, &children);
+    status = IORegistryEntryGetChildIterator(service, [options.plane UTF8String], &children);
     if (status == KERN_SUCCESS)
     {
         childUpNext = IOIteratorNext(children);
@@ -839,7 +792,7 @@ static void search( io_registry_entry_t service,
                     UInt32              serviceHasMatchedDepth,
                     UInt32              serviceDepth,
                     io_registry_entry_t stackOfObjects[],
-                    struct options      options )
+                    IORegistryInfoOptions *options)
 {
     io_registry_entry_t child       = 0; // (needs release)
     io_registry_entry_t childUpNext = 0; // (don't release)
@@ -895,7 +848,7 @@ static void search( io_registry_entry_t service,
 
     // Obtain the service's children.
 
-    status = IORegistryEntryGetChildIterator(service, options.plane, &children);
+    status = IORegistryEntryGetChildIterator(service, [options.plane UTF8String], &children);
     if (status == KERN_SUCCESS)
     {
         childUpNext = IOIteratorNext(children);
@@ -925,7 +878,7 @@ static void search( io_registry_entry_t service,
 static void show( io_registry_entry_t service,
                   UInt32              serviceDepth,
                   UInt64              stackOfBits,
-                  struct options      options )
+                  IORegistryInfoOptions *options)
 {
     io_name_t              class;          // (don't release)
     struct context         context    = { service, serviceDepth, stackOfBits, options };
@@ -939,7 +892,7 @@ static void show( io_registry_entry_t service,
 
     // Print out the name of the service.
 
-    status = IORegistryEntryGetNameInPlane(service, options.plane, name);
+    status = IORegistryEntryGetNameInPlane(service, [options.plane UTF8String], name);
     assertion(status == KERN_SUCCESS, "can't obtain name", strcpy(name, "<name error>"));
 
     indent(TRUE, serviceDepth, stackOfBits);
@@ -952,7 +905,7 @@ static void show( io_registry_entry_t service,
 
     // Print out the location of the service.
 
-    status = IORegistryEntryGetLocationInPlane(service, options.plane, location);
+    status = IORegistryEntryGetLocationInPlane(service, [options.plane UTF8String], location);
     if (status == KERN_SUCCESS)  print("@%s", location);
 
     // Print out the class of the service.
