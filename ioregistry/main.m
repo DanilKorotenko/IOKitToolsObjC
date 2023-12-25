@@ -17,6 +17,7 @@
 #include <unistd.h>                                   // (getopt, ...)
 
 #include "IORegistryInfoOptions.h"
+#include "IORegistryInfo.h"
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -274,11 +275,15 @@ int main(int argc, char ** argv)
         }
         else
         {
-            scan( /* service                */ service,
-                  /* serviceHasMoreSiblings */ FALSE,
-                  /* serviceDepth           */ 0,
-                  /* stackOfBits            */ 0,
-                  /* options                */ options );
+            IORegistryInfo *registryInfo = [IORegistryInfo createWithRootEntry];
+            registryInfo.options = options;
+            [registryInfo scan];
+
+//            scan( /* service                */ service,
+//                  /* serviceHasMoreSiblings */ FALSE,
+//                  /* serviceDepth           */ 0,
+//                  /* stackOfBits            */ 0,
+//                  /* options                */ options );
         }
     }
 

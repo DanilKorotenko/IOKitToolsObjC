@@ -6,6 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "IORegistryInfoOptions.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -14,6 +15,18 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)createWithRootEntry;
 
 - (instancetype)initWithEntry:(io_registry_entry_t)anEntry;
+
+#pragma mark -
+
+@property(strong) IORegistryInfoOptions *options;
+
+@property(readonly) NSString *name;
+@property(readonly) NSString *location;
+
+#pragma mark -
+
+- (void)scan;
+- (void)show;
 
 @end
 
