@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		DAB6900D2B3892A4008F0CA9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = DAB6900C2B3892A4008F0CA9 /* main.m */; };
 		DAB690132B39A4B2008F0CA9 /* IORegistryInfoOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = DAB690122B39A4B2008F0CA9 /* IORegistryInfoOptions.m */; };
+		DAB690162B39AA97008F0CA9 /* IORegistryInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = DAB690152B39AA97008F0CA9 /* IORegistryInfo.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -28,6 +29,8 @@
 		DAB6900C2B3892A4008F0CA9 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		DAB690112B39A4B2008F0CA9 /* IORegistryInfoOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IORegistryInfoOptions.h; sourceTree = "<group>"; };
 		DAB690122B39A4B2008F0CA9 /* IORegistryInfoOptions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IORegistryInfoOptions.m; sourceTree = "<group>"; };
+		DAB690142B39AA97008F0CA9 /* IORegistryInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IORegistryInfo.h; sourceTree = "<group>"; };
+		DAB690152B39AA97008F0CA9 /* IORegistryInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IORegistryInfo.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +66,8 @@
 				DAB6900C2B3892A4008F0CA9 /* main.m */,
 				DAB690112B39A4B2008F0CA9 /* IORegistryInfoOptions.h */,
 				DAB690122B39A4B2008F0CA9 /* IORegistryInfoOptions.m */,
+				DAB690142B39AA97008F0CA9 /* IORegistryInfo.h */,
+				DAB690152B39AA97008F0CA9 /* IORegistryInfo.m */,
 			);
 			path = ioregistry;
 			sourceTree = "<group>";
@@ -125,6 +130,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DAB6900D2B3892A4008F0CA9 /* main.m in Sources */,
+				DAB690162B39AA97008F0CA9 /* IORegistryInfo.m in Sources */,
 				DAB690132B39A4B2008F0CA9 /* IORegistryInfoOptions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

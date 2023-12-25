@@ -143,10 +143,10 @@ int main(int argc, char ** argv)
         switch (argument)
         {
             case 'a':
-                options.archive = TRUE;
+                options.archive = YES;
                 break;
             case 'b':
-                options.bold = TRUE;
+                options.bold = YES;
                 break;
             case 'c':
                 options.classStr = [NSString stringWithUTF8String:optarg];
@@ -155,16 +155,16 @@ int main(int argc, char ** argv)
                 options.depth = atoi(optarg);
                 break;
             case 'f':
-                options.format = TRUE;
+                options.format = YES;
                 break;
             case 'i':
-                options.inheritance = TRUE;
+                options.inheritance = YES;
                 break;
             case 'k':
                 options.key = [NSString stringWithUTF8String:optarg];
                 break;
             case 'l':
-                options.list = TRUE;
+                options.list = YES;
                 break;
             case 'n':
                 options.name = [NSString stringWithUTF8String:optarg];
@@ -173,23 +173,23 @@ int main(int argc, char ** argv)
                 options.plane = [NSString stringWithUTF8String:optarg];
                 break;
             case 'r':
-                options.root = TRUE;
+                options.root = YES;
                 break;
             case 's':
                 break;
             case 'S':
                 break;
             case 't':
-                options.tree = TRUE;
+                options.tree = YES;
                 break;
             case 'w':
                 options.width = atoi(optarg);
                 break;
             case 'x':
-                options.hex = TRUE;
+                options.hex = YES;
                 break;
             case 'y':
-                options.nouserclasses = TRUE;
+                options.nouserclasses = YES;
                 break;
             default:
                 usage();
