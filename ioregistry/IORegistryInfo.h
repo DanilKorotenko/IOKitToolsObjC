@@ -11,6 +11,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface IORegistryInfo : NSObject
 
++ (instancetype)createWithRootEntry;
+
 - (instancetype)initWithEntry:(io_registry_entry_t)anEntry;
 
 @end

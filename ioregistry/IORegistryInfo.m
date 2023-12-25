@@ -12,12 +12,25 @@
     io_registry_entry_t _entry;
 }
 
++ (instancetype)createWithRootEntry
+{
+    io_registry_entry_t service = IORegistryGetRootEntry(kIOMainPortDefault);
+    IORegistryInfo *result = nil;
+    if (service != MACH_PORT_NULL)
+    {
+        result = [[IORegistryInfo alloc] initWithEntry:service];
+        IOObjectRelease(service);
+    }
+    return result;
+}
+
+
 - (instancetype)initWithEntry:(io_registry_entry_t)anEntry
 {
     self = [super init];
     if (self)
     {
-        if (anEntry == 0)
+        if (anEntry == MACH_PORT_NULL)
         {
             return nil;
         }
@@ -30,7 +43,7 @@
 
 - (void)dealloc
 {
-    if (_entry != 0)
+    if (_entry != MACH_PORT_NULL)
     {
         IOObjectRelease(_entry);
     }
