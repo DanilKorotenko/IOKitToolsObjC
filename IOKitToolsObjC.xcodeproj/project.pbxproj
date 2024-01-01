@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DA1E8DC42B42FF790050E96E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = DA1E8DC32B42FF790050E96E /* AppDelegate.m */; };
+		DA1E8DC62B42FF7B0050E96E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DA1E8DC52B42FF7B0050E96E /* Assets.xcassets */; };
+		DA1E8DC92B42FF7B0050E96E /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = DA1E8DC72B42FF7B0050E96E /* MainMenu.xib */; };
+		DA1E8DCB2B42FF7B0050E96E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = DA1E8DCA2B42FF7B0050E96E /* main.m */; };
 		DAB6900D2B3892A4008F0CA9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = DAB6900C2B3892A4008F0CA9 /* main.m */; };
 		DAB690132B39A4B2008F0CA9 /* IORegistryInfoOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = DAB690122B39A4B2008F0CA9 /* IORegistryInfoOptions.m */; };
 		DAB690162B39AA97008F0CA9 /* IORegistryInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = DAB690152B39AA97008F0CA9 /* IORegistryInfo.m */; };
@@ -25,6 +29,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		DA1E8DC02B42FF790050E96E /* IORegistryViewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IORegistryViewer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DA1E8DC22B42FF790050E96E /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		DA1E8DC32B42FF790050E96E /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		DA1E8DC52B42FF7B0050E96E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		DA1E8DC82B42FF7B0050E96E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		DA1E8DCA2B42FF7B0050E96E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		DA1E8DCC2B42FF7B0050E96E /* IORegistryViewer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = IORegistryViewer.entitlements; sourceTree = "<group>"; };
 		DAB6900A2B3892A4008F0CA9 /* ioregistry */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ioregistry; sourceTree = BUILT_PRODUCTS_DIR; };
 		DAB6900C2B3892A4008F0CA9 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		DAB690112B39A4B2008F0CA9 /* IORegistryInfoOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IORegistryInfoOptions.h; sourceTree = "<group>"; };
@@ -34,6 +45,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		DA1E8DBD2B42FF790050E96E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		DAB690072B3892A4008F0CA9 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -44,10 +62,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		DA1E8DC12B42FF790050E96E /* IORegistryViewer */ = {
+			isa = PBXGroup;
+			children = (
+				DA1E8DC22B42FF790050E96E /* AppDelegate.h */,
+				DA1E8DC32B42FF790050E96E /* AppDelegate.m */,
+				DA1E8DC52B42FF7B0050E96E /* Assets.xcassets */,
+				DA1E8DC72B42FF7B0050E96E /* MainMenu.xib */,
+				DA1E8DCA2B42FF7B0050E96E /* main.m */,
+				DA1E8DCC2B42FF7B0050E96E /* IORegistryViewer.entitlements */,
+			);
+			path = IORegistryViewer;
+			sourceTree = "<group>";
+		};
 		DAB68FF32B3891F0008F0CA9 = {
 			isa = PBXGroup;
 			children = (
 				DAB6900B2B3892A4008F0CA9 /* ioregistry */,
+				DA1E8DC12B42FF790050E96E /* IORegistryViewer */,
 				DAB68FFD2B3891F0008F0CA9 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -56,6 +88,7 @@
 			isa = PBXGroup;
 			children = (
 				DAB6900A2B3892A4008F0CA9 /* ioregistry */,
+				DA1E8DC02B42FF790050E96E /* IORegistryViewer.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -75,6 +108,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		DA1E8DBF2B42FF790050E96E /* IORegistryViewer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DA1E8DCF2B42FF7B0050E96E /* Build configuration list for PBXNativeTarget "IORegistryViewer" */;
+			buildPhases = (
+				DA1E8DBC2B42FF790050E96E /* Sources */,
+				DA1E8DBD2B42FF790050E96E /* Frameworks */,
+				DA1E8DBE2B42FF790050E96E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = IORegistryViewer;
+			productName = IORegistryViewer;
+			productReference = DA1E8DC02B42FF790050E96E /* IORegistryViewer.app */;
+			productType = "com.apple.product-type.application";
+		};
 		DAB690092B3892A4008F0CA9 /* ioregistry */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = DAB690102B3892A4008F0CA9 /* Build configuration list for PBXNativeTarget "ioregistry" */;
@@ -101,6 +151,9 @@
 				BuildIndependentTargetsInParallel = 1;
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
+					DA1E8DBF2B42FF790050E96E = {
+						CreatedOnToolsVersion = 15.0.1;
+					};
 					DAB690092B3892A4008F0CA9 = {
 						CreatedOnToolsVersion = 15.0.1;
 					};
@@ -120,11 +173,33 @@
 			projectRoot = "";
 			targets = (
 				DAB690092B3892A4008F0CA9 /* ioregistry */,
+				DA1E8DBF2B42FF790050E96E /* IORegistryViewer */,
 			);
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		DA1E8DBE2B42FF790050E96E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DA1E8DC62B42FF7B0050E96E /* Assets.xcassets in Resources */,
+				DA1E8DC92B42FF7B0050E96E /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
+		DA1E8DBC2B42FF790050E96E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DA1E8DCB2B42FF7B0050E96E /* main.m in Sources */,
+				DA1E8DC42B42FF790050E96E /* AppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		DAB690062B3892A4008F0CA9 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -137,7 +212,70 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXVariantGroup section */
+		DA1E8DC72B42FF7B0050E96E /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DA1E8DC82B42FF7B0050E96E /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
+		DA1E8DCD2B42FF7B0050E96E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = IORegistryViewer/IORegistryViewer.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = QBPW9LPK8E;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSMainNibFile = MainMenu;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.danilkorotenko.IORegistryViewer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Debug;
+		};
+		DA1E8DCE2B42FF7B0050E96E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = IORegistryViewer/IORegistryViewer.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = QBPW9LPK8E;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSMainNibFile = MainMenu;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.danilkorotenko.IORegistryViewer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Release;
+		};
 		DAB690012B3891F0008F0CA9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -276,6 +414,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		DA1E8DCF2B42FF7B0050E96E /* Build configuration list for PBXNativeTarget "IORegistryViewer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DA1E8DCD2B42FF7B0050E96E /* Debug */,
+				DA1E8DCE2B42FF7B0050E96E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		DAB68FF72B3891F0008F0CA9 /* Build configuration list for PBXProject "IOKitToolsObjC" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
