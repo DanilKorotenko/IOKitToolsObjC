@@ -18,15 +18,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark -
 
-@property(strong) IORegistryInfoOptions *options;
+@property (strong, nullable) NSString *plane;
 
 @property(readonly) NSString *name;
 @property(readonly) NSString *location;
-
-#pragma mark -
-
-- (void)scan;
-- (void)show;
+@property(readonly) NSString *className;
+@property(readonly) NSArray *children;
+@property(readonly) NSDictionary *properties;
 
 @end
 

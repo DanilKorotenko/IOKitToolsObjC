@@ -14,6 +14,9 @@
 
 @synthesize name;
 @synthesize location;
+@synthesize className;
+@synthesize children;
+@synthesize properties;
 
 + (instancetype)createWithRootEntry
 {
@@ -37,6 +40,8 @@
             return nil;
         }
 
+        self.plane = @kIOServicePlane;
+
         _entry = anEntry;
         IOObjectRetain(_entry);
     }
@@ -56,7 +61,10 @@
     NSDictionary *descriptionDictopnary =
         @{
             @"name": self.name == nil ? @"<null>" : self.name,
-            @"location": self.location == nil ? @"<null>" : self.location
+            @"location": self.location == nil ? @"<null>" : self.location,
+            @"className": self.className == nil ? @"<null>" : self.className,
+            @"children": self.children,
+            @"properties": self.properties
         };
     return [descriptionDictopnary description];
 }
@@ -69,7 +77,7 @@
     {
         io_name_t              ioName;           // (don't release)
 
-        kern_return_t status = IORegistryEntryGetNameInPlane(_entry, [self.options.plane UTF8String], ioName);
+        kern_return_t status = IORegistryEntryGetNameInPlane(_entry, [self.plane UTF8String], ioName);
         if (status == KERN_SUCCESS)
         {
             name = [NSString stringWithUTF8String:ioName];
@@ -83,7 +91,7 @@
     if (nil == location)
     {
         io_name_t              ioLocation;           // (don't release)
-        kern_return_t  status = IORegistryEntryGetLocationInPlane(_entry, [self.options.plane UTF8String], ioLocation);
+        kern_return_t  status = IORegistryEntryGetLocationInPlane(_entry, [self.plane UTF8String], ioLocation);
         if (status == KERN_SUCCESS)
         {
             location = [NSString stringWithUTF8String:ioLocation];
@@ -92,208 +100,73 @@
     return location;
 }
 
-#pragma mark -
-
-- (void)scan
+- (NSString *)className
 {
-    [self show];
-
-    io_registry_entry_t child       = 0; // (needs release)
-    io_registry_entry_t childUpNext = 0; // (don't release)
-    io_iterator_t       children    = 0; // (needs release)
-    kern_return_t       status      = KERN_SUCCESS;
-
-    // Obtain the service's children.
-
-    status = IORegistryEntryGetChildIterator(_entry, [self.options.plane UTF8String], &children);
-    if (status == KERN_SUCCESS)
+    if (nil == className)
     {
-        childUpNext = IOIteratorNext(children);
-
-        // Save has-more-siblings state into stackOfBits for this depth.
-
-//        if (serviceHasMoreSiblings)
-//        {
-//            stackOfBits |=  (1 << serviceDepth);
-//        }
-//        else
-//        {
-//            stackOfBits &= ~(1 << serviceDepth);
-//        }
-
-        // Save has-children state into stackOfBits for this depth.
-
-//        if (options.depth == 0 || options.depth > serviceDepth + 1)
-//        {
-//            if (childUpNext)
-//            {
-//                stackOfBits |=  (2 << serviceDepth);
-//            }
-//            else
-//            {
-//                stackOfBits &= ~(2 << serviceDepth);
-//            }
-//        }
-
-        // Print out the relevant service information.
-
-//        show(service, serviceDepth, stackOfBits, options);
-
-        // Traverse over the children of this service.
-
-//        if (options.depth == 0 || options.depth > serviceDepth + 1)
-//        {
-//            while (childUpNext)
-//            {
-//                child       = childUpNext;
-//                childUpNext = IOIteratorNext(children);
-//
-//                scan( /* service                */ child,
-//                      /* serviceHasMoreSiblings */ (childUpNext) ? TRUE : FALSE,
-//                      /* serviceDepth           */ serviceDepth + 1,
-//                      /* stackOfBits            */ stackOfBits,
-//                      /* options                */ options );
-//
-//                IOObjectRelease(child);
-//            }
-//        }
-//
-//        IOObjectRelease(children);
+        io_name_t class;          // (don't release)
+        kern_return_t status = IOObjectGetClass(_entry, class);
+        if (status == KERN_SUCCESS)
+        {
+            className = [NSString stringWithUTF8String:class];
+        }
     }
+    return className;
 }
 
-- (void)show
+- (NSArray *)children
 {
-    io_name_t              class;          // (don't release)
-//    struct context         context    = { service, serviceDepth, stackOfBits, options };
-    uint32_t               integer    = 0;
-    uint32_t               state      = 0;
-    uint64_t               accumulated_busy_time = 0;
-    CFMutableDictionaryRef properties = 0; // (needs release)
-    kern_return_t          status     = KERN_SUCCESS;
+    if (nil == children)
+    {
+        children = [self scan];
+    }
+    return children;
+}
 
-    // Print out the name of the service.
+- (NSDictionary *)properties
+{
+    if (nil == properties)
+    {
+        CFMutableDictionaryRef propertiesRef = NULL; // (needs release)
 
-    NSLog(@"%@", self.description);
+        kern_return_t status = IORegistryEntryCreateCFProperties(
+            _entry, &propertiesRef, kCFAllocatorDefault, kNilOptions );
+        if (status == KERN_SUCCESS && propertiesRef != NULL)
+        {
+            properties = CFBridgingRelease(propertiesRef);
+        }
+    }
+    return properties;
+}
 
-//    // Print out the class of the service.
-//
-//    print("  <class ");
-//
-//    if (options.inheritance)
-//    {
-//        CFStringRef classCFStr;
-//        CFStringRef ancestryCFStr;
-//        char *      aCStr;
-//
-////        classCFStr = _IOObjectCopyClass (service, kIOClassNameOverrideNone);
-//        classCFStr = IOObjectCopyClass (service);
-//        if (classCFStr) {
-//            ancestryCFStr = createInheritanceStringForIORegistryClassName (classCFStr);
-//            if (ancestryCFStr) {
-//                aCStr = (char *) CFStringGetCStringPtr (ancestryCFStr, kCFStringEncodingUTF8);
-//                if (NULL != aCStr)
-//                {
-//                    print("%s", aCStr);
-//                }
-//                CFRelease (ancestryCFStr);
-//            }
-//            CFRelease (classCFStr);
-//        }
-//    }
-//    else
-//    {
-////        status = _IOObjectGetClass(service, kIOClassNameOverrideNone, class);
-//        status = IOObjectGetClass(service, class);
-//        assertion(status == KERN_SUCCESS, "can't obtain class", strcpy(class, "<class error>"));
-//
-//        print("%s", class);
-//    }
-//
-//    // Prepare to print out the service's useful debug information.
-//
-//    uint64_t entryID;
-//
-//    status = IORegistryEntryGetRegistryEntryID(service, &entryID);
-//    if (status == KERN_SUCCESS)
-//    {
-//        print(", id 0x%llx", entryID);
-//    }
-//
-//    // Print out the busy state of the service (for IOService objects).
-//
-////    if (_IOObjectConformsTo(service, "IOService", kIOClassNameOverrideNone))
-//    if (IOObjectConformsTo(service, "IOService"))
-//    {
-////        status = IOServiceGetBusyStateAndTime(service, &state, &integer, &accumulated_busy_time);
-//        status = IOServiceGetBusyState(service, &state);
-//        assertion(status == KERN_SUCCESS, "can't obtain state", accumulated_busy_time = integer = state = 0);
-//
-////        print( ", %sregistered, %smatched, %sactive",
-////               state & kIOServiceRegisteredState ? "" : "!",
-////               state & kIOServiceMatchedState    ? "" : "!",
-////               state & kIOServiceInactiveState   ? "in" : "" );
-//
-//        print( ", %sregistered, %smatched, %sactive",
-//               state & 1 ? "" : "!",
-//               state & 1    ? "" : "!",
-//               state & 1   ? "in" : "" );
-//
-//        print(", busy %ld", 
-//        (unsigned long)integer);
-//
-//        if (accumulated_busy_time)
-//        {
-//            print(" (%lld ms)", 
-//            accumulated_busy_time / kMillisecondScale);
-//        }
-//    }
-//
-//    // Print out the retain count of the service.
-//
-//    integer = IOObjectGetKernelRetainCount(service);
-//
-//    print(", retain %ld", (unsigned long)integer);
-//
-//    println(">");
-//
-//    // Determine whether the service is a match.
-//
-//    if (options.list || compare(service, options))
-//    {
-//        indent(FALSE, serviceDepth, stackOfBits);
-//        println("{");
-//
-//        // Obtain the service's properties.
-//
-//        status = IORegistryEntryCreateCFProperties( service,
-//                                                    &properties,
-//                                                    kCFAllocatorDefault,
-//                                                    kNilOptions );
-//        assertion(status == KERN_SUCCESS, "can't obtain properties", properties = NULL);
-//
-//        if (!properties)
-//        {
-//            properties = CFDictionaryCreateMutable( kCFAllocatorDefault,
-//                                                    0,
-//                                                    &kCFTypeDictionaryKeyCallBacks,
-//                                                    &kCFTypeDictionaryValueCallBacks );
-//            assertion_fatal(properties != NULL, "can't create dictionary");
-//        }
-//
-//        // Print out the service's properties.
-//
-//        CFDictionaryApplyFunction(properties, showitem, &context);
-//
-//        indent(FALSE, serviceDepth, stackOfBits);
-//        println("}");
-//        indent(FALSE, serviceDepth, stackOfBits);
-//        println("");
-//
-//        // Release resources.
-//
-//        CFRelease(properties);
-//    }
+#pragma mark -
+
+- (NSArray *)scan
+{
+    NSMutableArray *result = [NSMutableArray array];
+
+    // Obtain the service's children.
+    io_iterator_t       children    = 0; // (needs release)
+    kern_return_t status = IORegistryEntryGetChildIterator(_entry, [self.plane UTF8String], &children);
+
+    if (status == KERN_SUCCESS)
+    {
+        io_registry_entry_t childUpNext = 0; // (don't release)
+        childUpNext = IOIteratorNext(children);
+
+        while (childUpNext)
+        {
+            io_registry_entry_t child = childUpNext;
+            IORegistryInfo *ch = [[IORegistryInfo alloc] initWithEntry:child];
+            [result addObject:ch];
+            childUpNext = IOIteratorNext(children);
+            IOObjectRelease(child);
+        }
+
+        IOObjectRelease(children);
+    }
+
+    return result;
 }
 
 @end
